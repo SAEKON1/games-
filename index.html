@@ -3,49 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مغامرة الجزيرة - لعبة تعاونية بدون إعدادات</title>
+    <title>مغامرة الجزيرة - إصلاح مشكلة الانضمام</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* نفس الأنماط السابقة - محفوظة للمساحة */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        :root { --player1: #3498db; --player2: #e74c3c; --team: #2ecc71; --dark: #2c3e50; --light: #ecf0f1; --gold: #f1c40f; }
-        body { background: linear-gradient(135deg, #1a2980, #26d0ce); color: var(--light); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
-        .container { max-width: 900px; width: 100%; background-color: rgba(44, 62, 80, 0.95); border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 3px solid var(--team); }
-        .header { background: linear-gradient(90deg, var(--player1) 0%, var(--player2) 100%); padding: 25px; text-align: center; border-bottom: 3px solid var(--gold); }
-        .header h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .game-area { padding: 30px; min-height: 600px; }
-        .login-screen { text-align: center; padding: 40px 20px; }
-        .login-title { font-size: 2rem; color: var(--gold); margin-bottom: 30px; }
-        .player-select { display: flex; justify-content: center; gap: 30px; margin: 40px 0; }
-        .player-option { background-color: rgba(255,255,255,0.1); border-radius: 15px; padding: 30px; width: 250px; cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent; }
-        .player-option:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .player-option.player1:hover { border-color: var(--player1); }
-        .player-option.player2:hover { border-color: var(--player2); }
-        .player-icon { font-size: 4rem; margin-bottom: 20px; }
-        .player-name { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; }
-        .room-code-section { margin: 40px 0; padding: 25px; background-color: rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid var(--gold); }
-        .room-code-display { font-size: 2.5rem; font-weight: bold; letter-spacing: 5px; background-color: var(--dark); padding: 15px; border-radius: 10px; margin: 20px 0; border: 2px solid var(--team); }
-        .code-input { display: flex; gap: 10px; margin-top: 20px; }
-        .code-input input { flex: 1; padding: 15px; font-size: 1.5rem; text-align: center; border-radius: 10px; border: 2px solid var(--team); background-color: var(--dark); color: white; letter-spacing: 3px; }
-        .code-input button { padding: 15px 25px; background-color: var(--team); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
-        .waiting-message { background-color: rgba(52,152,219,0.2); border-radius: 15px; padding: 20px; margin: 30px 0; border: 2px solid var(--player1); text-align: center; font-size: 1.3rem; }
-        .game-screen { display: none; }
-        .scene-container { background-color: rgba(0,0,0,0.3); border-radius: 15px; padding: 25px; margin-bottom: 30px; min-height: 250px; border: 2px solid rgba(255,255,255,0.1); }
-        .scene-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 20px; }
-        .scene-text { font-size: 1.3rem; line-height: 1.8; margin-bottom: 10px; }
-        .choices-container { display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0; }
-        .choice-btn { background: linear-gradient(135deg, var(--dark) 0%, #34495e 100%); color: white; border: none; padding: 20px; border-radius: 12px; font-size: 1.3rem; cursor: pointer; transition: all 0.3s ease; text-align: right; border: 2px solid transparent; display: flex; align-items: center; gap: 15px; }
-        .choice-btn:hover { transform: translateY(-5px); border-color: var(--team); box-shadow: 0 5px 15px rgba(46,204,113,0.4); }
-        .team-section { background: linear-gradient(135deg, rgba(46,204,113,0.2), rgba(46,204,113,0.05)); border-radius: 15px; padding: 20px; margin: 20px 0; border: 2px solid var(--team); }
-        .team-title { font-size: 1.5rem; color: var(--team); margin-bottom: 15px; text-align: center; }
-        .player-choices { display: flex; justify-content: space-between; gap: 15px; margin: 20px 0; }
-        .player-choice { flex: 1; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; }
-        .player1-choice { background-color: rgba(52,152,219,0.3); border: 2px solid var(--player1); }
-        .player2-choice { background-color: rgba(231,76,60,0.3); border: 2px solid var(--player2); }
-        .team-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .team-btn { padding: 15px 30px; background-color: var(--team); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
-        .copy-btn { background-color: var(--gold); color: var(--dark); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        @media (max-width: 768px) { .player-select { flex-direction: column; align-items: center; } .player-option { width: 100%; max-width: 300px; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --player1: #3498db; /* أزرق */
+            --player2: #e74c3c; /* أحمر */
+            --team: #2ecc71;   /* أخضر */
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gold: #f1c40f;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(44, 62, 80, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 3px solid var(--team);
+        }
+        
+        .header {
+            background: linear-gradient(90deg, var(--player1) 0%, var(--player2) 100%);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            padding: 30px;
+            min-height: 600px;
+        }
+        
+        .login-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .login-title {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 30px;
+        }
+        
+        .player-select {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .player-option {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            width: 250px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .player-option:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .player-option.player1:hover {
+            border-color: var(--player1);
+        }
+        
+        .player-option.player2:hover {
+            border-color: var(--player2);
+        }
+        
+        .player-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .room-code-section {
+            margin: 40px 0;
+            padding: 25px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+        }
+        
+        .room-code-title {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .room-code-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            background-color: var(--dark);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid var(--team);
+        }
+        
+        .code-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .code-input input {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid var(--team);
+            background-color: var(--dark);
+            color: white;
+            letter-spacing: 3px;
+        }
+        
+        .code-input button {
+            padding: 15px 25px;
+            background-color: var(--team);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .code-input button:hover {
+            background-color: #27ae60;
+        }
+        
+        .waiting-message {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            border: 2px solid var(--player1);
+            text-align: center;
+            font-size: 1.3rem;
+        }
+        
+        .game-screen {
+            display: none;
+        }
+        
+        .scene-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            min-height: 250px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .scene-title {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scene-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .choices-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .choice-btn {
+            background: linear-gradient(135deg, var(--dark) 0%, #34495e 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: right;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .choice-btn:hover {
+            transform: translateY(-5px);
+            border-color: var(--team);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .choice-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .choice-btn:disabled:hover {
+            border-color: transparent;
+            box-shadow: none;
+        }
+        
+        .team-section {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.05));
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--team);
+        }
+        
+        .team-title {
+            font-size: 1.5rem;
+            color: var(--team);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .player-choices {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .player-choice {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .player1-choice {
+            background-color: rgba(52, 152, 219, 0.3);
+            border: 2px solid var(--player1);
+        }
+        
+        .player2-choice {
+            background-color: rgba(231, 76, 60, 0.3);
+            border: 2px solid var(--player2);
+        }
+        
+        .team-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .team-btn {
+            padding: 15px 30px;
+            background-color: var(--team);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .team-btn:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+        }
+        
+        .team-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .team-btn:disabled:hover {
+            background-color: var(--team);
+            transform: none;
+        }
+        
+        .copy-btn {
+            background-color: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: #e6b800;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success {
+            background-color: rgba(46, 204, 113, 0.3);
+            border: 2px solid var(--team);
+            color: var(--team);
+        }
+        
+        .error {
+            background-color: rgba(231, 76, 60, 0.3);
+            border: 2px solid var(--player2);
+            color: var(--player2);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .player-select {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .player-option {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .team-actions {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -57,7 +418,7 @@
                     <i class="fas fa-users"></i> مغامرة الجزيرة التعاونية
                 </div>
                 <p style="font-size: 1.3rem; margin-bottom: 30px;">
-                    لعبة تعاونية لصديقين - سهل التشغيل بدون إعدادات معقدة!
+                    لعبة تعاونية لصديقين - لا تحتاج إلى إعدادات معقدة!
                 </p>
                 
                 <div class="player-select">
@@ -69,7 +430,7 @@
                             اللاعب 1 (أنت)
                         </div>
                         <div class="player-desc">
-                            أنشئ اللعبة وأرسل الرمز لصديقك
+                            أنشئ اللعبة وابدأ المغامرة
                         </div>
                     </div>
                     
@@ -81,7 +442,7 @@
                             اللاعب 2 (صديقك)
                         </div>
                         <div class="player-desc">
-                            انضم برمز الدعوة من صديقك
+                            انضم برمز الدعوة
                         </div>
                     </div>
                 </div>
@@ -91,6 +452,9 @@
                     <div class="room-code-title">
                         <i class="fas fa-plus-circle"></i> أنشئ غرفة جديدة
                     </div>
+                    <p style="margin-bottom: 20px;">
+                        انسخ هذا الرمز وأرسله لصديقك لينضم إليك:
+                    </p>
                     <div class="room-code-display" id="roomCodeDisplay">
                         جاري الإنشاء...
                     </div>
@@ -98,7 +462,7 @@
                         <i class="fas fa-copy"></i> انسخ الرمز
                     </button>
                     <div class="waiting-message" id="waitingMessage">
-                        <i class="fas fa-hourglass-half"></i> انتظر صديقك يدخل الرمز...
+                        <i class="fas fa-hourglass-half"></i> في انتظار انضمام صديقك...
                     </div>
                 </div>
                 
@@ -107,12 +471,16 @@
                     <div class="room-code-title">
                         <i class="fas fa-sign-in-alt"></i> انضم إلى غرفة
                     </div>
+                    <p style="margin-bottom: 20px;">
+                        أدخل رمز الدعوة الذي أرسله لك صديقك:
+                    </p>
                     <div class="code-input">
-                        <input type="text" id="roomCodeInput" placeholder="أدخل الرمز" maxlength="6">
+                        <input type="text" id="roomCodeInput" placeholder="أدخل الرمز (6 أحرف)" maxlength="6">
                         <button id="joinRoomBtn">
-                            <i class="fas fa-play"></i> انضم
+                            <i class="fas fa-play"></i> انضم الآن
                         </button>
                     </div>
+                    <div id="joinStatus" style="display: none;"></div>
                 </div>
             </div>
         </div>
@@ -125,7 +493,7 @@
                     <span id="sceneTitle">مدخل الجزيرة الغامضة</span>
                 </div>
                 <div class="scene-text" id="sceneText">
-                    أنت وصديقك على جزيرة غامضة. أمامكم ثلاث طرق. يجب أن تتفقا على طريق واحد.
+                    أنت وصديقك وصلتم إلى جزيرة غامضة. أمامكم ثلاث طرق. يجب أن تتفقا على طريق واحد.
                 </div>
                 
                 <div class="player-choices">
@@ -135,6 +503,21 @@
                     <div class="player-choice player2-choice" id="player2ChoiceDisplay">
                         <i class="fas fa-user-friends"></i> صديقك: ينتظر
                     </div>
+                </div>
+            </div>
+            
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--team);" id="teamPoints">100</div>
+                    <div class="stat-label">نقاط الفريق</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="sceneNumber">1</div>
+                    <div class="stat-label">المشهد</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="playerRole">اللاعب 1</div>
+                    <div class="stat-label">دورك</div>
                 </div>
             </div>
             
@@ -159,151 +542,55 @@
                         <i class="fas fa-check-circle"></i> نتفق على هذا القرار
                     </button>
                     <button class="team-btn" id="resetBtn">
-                        <i class="fas fa-redo"></i> غير رأيك
+                        <i class="fas fa-redo"></i> أغير رأيي
                     </button>
                 </div>
             </div>
+            
+            <div id="gameStatus" class="status-message" style="display: none;"></div>
         </div>
     </div>
 
     <script>
-        // نظام تخزين محلي بسيط
-        class LocalMultiplayer {
-            constructor() {
-                this.player = null;
-                this.roomId = null;
-                this.interval = null;
-                this.gameState = {
-                    player1Choice: null,
-                    player2Choice: null,
-                    scene: 1,
-                    teamPoints: 100,
-                    gameOver: false
-                };
-            }
-            
-            // إنشاء غرفة
-            createRoom() {
-                const code = this.generateCode();
-                this.player = 'player1';
-                this.roomId = code;
-                
-                // حفظ حالة الغرفة
-                localStorage.setItem(`room_${code}`, JSON.stringify({
-                    created: Date.now(),
-                    player1Connected: true,
-                    player2Connected: false,
-                    ...this.gameState
-                }));
-                
-                // بدء التحديث الدوري
-                this.startSync();
-                return code;
-            }
-            
-            // الانضمام لغرفة
-            joinRoom(code) {
-                const roomData = JSON.parse(localStorage.getItem(`room_${code}`));
-                
-                if (!roomData) {
-                    throw new Error('الغرفة غير موجودة');
-                }
-                
-                if (roomData.player2Connected) {
-                    throw new Error('الغرفة ممتلئة');
-                }
-                
-                this.player = 'player2';
-                this.roomId = code;
-                
-                // تحديث حالة الغرفة
-                roomData.player2Connected = true;
-                localStorage.setItem(`room_${code}`, JSON.stringify(roomData));
-                
-                // بدء التحديث الدوري
-                this.startSync();
-                return roomData;
-            }
-            
-            // مزامنة البيانات
-            startSync() {
-                this.interval = setInterval(() => {
-                    this.syncGameState();
-                }, 1000); // تحديث كل ثانية
-            }
-            
-            syncGameState() {
-                const roomData = JSON.parse(localStorage.getItem(`room_${this.roomId}`));
-                if (roomData) {
-                    this.gameState = roomData;
-                    this.onUpdate && this.onUpdate(roomData);
-                }
-            }
-            
-            // تحديث القرار
-            updateChoice(choice) {
-                const roomData = JSON.parse(localStorage.getItem(`room_${this.roomId}`));
-                if (!roomData) return;
-                
-                if (this.player === 'player1') {
-                    roomData.player1Choice = choice;
-                } else {
-                    roomData.player2Choice = choice;
-                }
-                
-                localStorage.setItem(`room_${this.roomId}`, JSON.stringify(roomData));
-            }
-            
-            // تأكيد القرار الجماعي
-            confirmTeamChoice() {
-                const roomData = JSON.parse(localStorage.getItem(`room_${this.roomId}`));
-                if (!roomData) return;
-                
-                // الانتقال للمشهد التالي
-                roomData.scene++;
-                roomData.player1Choice = null;
-                roomData.player2Choice = null;
-                
-                localStorage.setItem(`room_${this.roomId}`, JSON.stringify(roomData));
-            }
-            
-            // إنشاء رمز عشوائي
-            generateCode() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let code = '';
-                for (let i = 0; i < 6; i++) {
-                    code += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return code;
-            }
-            
-            // تنظيف
-            cleanup() {
-                if (this.interval) {
-                    clearInterval(this.interval);
-                }
-            }
-        }
+        // ========================
+        // النظام الأساسي للعبة
+        // ========================
         
-        // تهيئة اللعبة
-        const game = new LocalMultiplayer();
-        const scenes = [
-            {
-                title: "مدخل الجزيرة الغامضة",
-                text: "أنت وصديقك وصلتم إلى جزيرة غامضة بعد عاصفة قوية. أمامكم ثلاث طرق. يجب أن تتفقا على طريق واحد تسلكانه معًا.",
-                choices: ["ندخل إلى الغابة", "نستكشف الكهف", "نبقى على الشاطئ"]
-            },
-            {
-                title: "عمق الغابة",
-                text: "دخلتم إلى الغابة ووجدتم شجرة فاكهة غريبة. الثمار تبدو لذيذة ولكن لونها غريب. ماذا تفعلان؟",
-                choices: ["نتناول بعض الثمار", "نتجاهلها ونواصل", "نفحصها بحذر"]
-            },
-            {
-                title: "الكهف المظلم",
-                text: "دخلتم إلى كهف مظلم. تسمعان صوت ماء يقطر. تجدان صندوقاً قديماً. ماذا تفعلان؟",
-                choices: ["نفتح الصندوق", "نبحث عن مصدر الماء", "نخرج بسرعة"]
-            }
-        ];
+        // حالة اللعبة
+        const gameState = {
+            player: null, // 'player1' أو 'player2'
+            roomCode: null,
+            currentScene: 1,
+            teamPoints: 100,
+            scenes: [
+                {
+                    id: 1,
+                    title: "مدخل الجزيرة الغامضة",
+                    text: "أنت وصديقك وصلتم إلى جزيرة غامضة بعد عاصفة قوية. أمامكم ثلاث طرق: طريق يؤدي إلى الغابة، وطريق إلى الكهف، وطريق إلى الشاطئ. يجب أن تتفقا على طريق واحد تسلكانه معًا.",
+                    choices: [
+                        { id: 1, text: "ندخل إلى الغابة", icon: "fas fa-tree" },
+                        { id: 2, text: "نستكشف الكهف", icon: "fas fa-mountain" },
+                        { id: 3, text: "نبقى على الشاطئ", icon: "fas fa-umbrella-beach" }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "عمق الغابة",
+                    text: "دخلتم إلى الغابة ووجدتم شجرة فاكهة غريبة. الثمار تبدو لذيذة ولكن لونها غريب. أيضًا، سمعتم صوت نهر قريب. ماذا تفعلان؟",
+                    choices: [
+                        { id: 1, text: "نتناول بعض الثمار", icon: "fas fa-apple-alt" },
+                        { id: 2, text: "نبحث عن النهر", icon: "fas fa-water" },
+                        { id: 3, text: "نتسلق شجرة عالية لنرى المنطقة", icon: "fas fa-mountain" }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "نهاية المغامرة",
+                    text: "مبروك! لقد أكملتما المغامرة بنجاح. تعاونكما كان رائعًا وأديتم إلى اتخاذ القرارات الصحيحة.",
+                    choices: []
+                }
+            ]
+        };
         
         // عناصر DOM
         const loginScreen = document.getElementById('loginScreen');
@@ -317,153 +604,421 @@
         const waitingMessage = document.getElementById('waitingMessage');
         const roomCodeInput = document.getElementById('roomCodeInput');
         const joinRoomBtn = document.getElementById('joinRoomBtn');
+        const joinStatus = document.getElementById('joinStatus');
         const sceneTitle = document.getElementById('sceneTitle');
         const sceneText = document.getElementById('sceneText');
+        const sceneNumber = document.getElementById('sceneNumber');
+        const player1ChoiceDisplay = document.getElementById('player1ChoiceDisplay');
+        const player2ChoiceDisplay = document.getElementById('player2ChoiceDisplay');
+        const teamPoints = document.getElementById('teamPoints');
+        const playerRole = document.getElementById('playerRole');
         const choice1Btn = document.getElementById('choice1Btn');
         const choice2Btn = document.getElementById('choice2Btn');
         const choice3Btn = document.getElementById('choice3Btn');
-        const player1ChoiceDisplay = document.getElementById('player1ChoiceDisplay');
-        const player2ChoiceDisplay = document.getElementById('player2ChoiceDisplay');
         const confirmChoiceBtn = document.getElementById('confirmChoiceBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const gameStatus = document.getElementById('gameStatus');
         
-        // الأحداث
-        player1Btn.addEventListener('click', () => {
-            player1Btn.style.opacity = '1';
-            player2Btn.style.opacity = '0.5';
-            createRoomSection.style.display = 'block';
-            joinRoomSection.style.display = 'none';
+        // متغيرات إضافية
+        let playerChoices = {
+            player1: null,
+            player2: null
+        };
+        
+        let syncInterval = null;
+        
+        // ========================
+        // وظائف المساعدة
+        // ========================
+        
+        // إنشاء رمز غرفة عشوائي
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+        
+        // حفظ البيانات في localStorage
+        function saveGameData() {
+            const roomData = {
+                code: gameState.roomCode,
+                player1Connected: true,
+                player2Connected: gameState.player === 'player2',
+                playerChoices: playerChoices,
+                gameState: gameState,
+                lastUpdated: Date.now()
+            };
             
-            const code = game.createRoom();
-            roomCodeDisplay.textContent = code;
-            waitingMessage.innerHTML = `<i class="fas fa-hourglass-half"></i> انتظر صديقك يدخل الرمز:<br><strong>${code}</strong>`;
-        });
+            localStorage.setItem(`game_room_${gameState.roomCode}`, JSON.stringify(roomData));
+        }
         
-        player2Btn.addEventListener('click', () => {
-            player1Btn.style.opacity = '0.5';
-            player2Btn.style.opacity = '1';
-            createRoomSection.style.display = 'none';
-            joinRoomSection.style.display = 'block';
-        });
+        // تحميل البيانات من localStorage
+        function loadGameData(roomCode) {
+            const data = localStorage.getItem(`game_room_${roomCode}`);
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        }
         
-        copyCodeBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(roomCodeDisplay.textContent);
-            alert('تم نسخ الرمز: ' + roomCodeDisplay.textContent);
-        });
+        // تحديث البيانات في localStorage
+        function updateGameData() {
+            const roomData = loadGameData(gameState.roomCode);
+            if (roomData) {
+                roomData.playerChoices = playerChoices;
+                roomData.gameState = gameState;
+                roomData.lastUpdated = Date.now();
+                
+                if (gameState.player === 'player1') {
+                    roomData.player1Connected = true;
+                } else {
+                    roomData.player2Connected = true;
+                }
+                
+                localStorage.setItem(`game_room_${gameState.roomCode}`, JSON.stringify(roomData));
+            }
+        }
         
-        joinRoomBtn.addEventListener('click', () => {
-            const code = roomCodeInput.value.toUpperCase();
-            if (code.length !== 6) {
-                alert('الرجاء إدخال رمز مكون من 6 أحرف');
+        // التحقق من صحة الرمز
+        function isValidRoomCode(code) {
+            return code && code.length === 6 && /^[A-Z0-9]+$/.test(code);
+        }
+        
+        // عرض رسالة حالة
+        function showStatus(message, type = 'success') {
+            gameStatus.textContent = message;
+            gameStatus.className = `status-message ${type}`;
+            gameStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                gameStatus.style.display = 'none';
+            }, 3000);
+        }
+        
+        // ========================
+        // تهيئة اللعبة
+        // ========================
+        
+        function init() {
+            // اختيار اللاعب 1
+            player1Btn.addEventListener('click', () => {
+                gameState.player = 'player1';
+                playerRole.textContent = "اللاعب 1";
+                
+                // إنشاء رمز الغرفة
+                gameState.roomCode = generateRoomCode();
+                roomCodeDisplay.textContent = gameState.roomCode;
+                
+                // إظهار قسم إنشاء الغرفة
+                createRoomSection.style.display = 'block';
+                joinRoomSection.style.display = 'none';
+                
+                // حفظ بيانات الغرفة
+                saveGameData();
+                
+                // بدء المزامنة
+                startSync();
+                
+                // تحديث الواجهة
+                updatePlayerSelectionUI();
+            });
+            
+            // اختيار اللاعب 2
+            player2Btn.addEventListener('click', () => {
+                gameState.player = 'player2';
+                playerRole.textContent = "اللاعب 2";
+                
+                // إظهار قسم الانضمام
+                createRoomSection.style.display = 'none';
+                joinRoomSection.style.display = 'block';
+                
+                updatePlayerSelectionUI();
+            });
+            
+            // نسخ الرمز
+            copyCodeBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(gameState.roomCode).then(() => {
+                    showStatus('تم نسخ الرمز بنجاح!', 'success');
+                });
+            });
+            
+            // الانضمام للغرفة
+            joinRoomBtn.addEventListener('click', joinRoom);
+            
+            // إدخال الرمز عند الضغط على Enter
+            roomCodeInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    joinRoom();
+                }
+            });
+            
+            // أحداث الخيارات
+            choice1Btn.addEventListener('click', () => makeChoice(1));
+            choice2Btn.addEventListener('click', () => makeChoice(2));
+            choice3Btn.addEventListener('click', () => makeChoice(3));
+            
+            // تأكيد القرار
+            confirmChoiceBtn.addEventListener('click', confirmTeamChoice);
+            
+            // إعادة تعيين الخيار
+            resetBtn.addEventListener('click', resetChoice);
+            
+            // تحميل المشهد الأول
+            loadScene(1);
+        }
+        
+        // ========================
+        // وظائف اللعبة
+        // ========================
+        
+        function updatePlayerSelectionUI() {
+            if (gameState.player === 'player1') {
+                player1Btn.style.opacity = '1';
+                player1Btn.style.transform = 'scale(1.05)';
+                player2Btn.style.opacity = '0.5';
+                player2Btn.style.transform = 'scale(1)';
+            } else {
+                player1Btn.style.opacity = '0.5';
+                player1Btn.style.transform = 'scale(1)';
+                player2Btn.style.opacity = '1';
+                player2Btn.style.transform = 'scale(1.05)';
+            }
+        }
+        
+        function joinRoom() {
+            const code = roomCodeInput.value.toUpperCase().trim();
+            
+            if (!isValidRoomCode(code)) {
+                showStatus('الرجاء إدخال رمز صحيح مكون من 6 أحرف (أحرف إنجليزية وأرقام فقط)', 'error');
                 return;
             }
             
-            try {
-                game.joinRoom(code);
-                loginScreen.style.display = 'none';
-                gameScreen.style.display = 'block';
-                updateScene(0);
-            } catch (error) {
-                alert(error.message);
-            }
-        });
-        
-        // تحديث المشهد
-        function updateScene(index) {
-            if (index >= scenes.length) {
-                sceneTitle.textContent = "نهاية المغامرة!";
-                sceneText.textContent = "مبروك! أكملتما المغامرة بنجاح!";
-                choicesContainer.style.display = 'none';
+            // التحقق من وجود الغرفة
+            const roomData = loadGameData(code);
+            
+            if (!roomData) {
+                showStatus('لم يتم العثور على غرفة بهذا الرمز', 'error');
                 return;
             }
             
-            const scene = scenes[index];
+            if (roomData.player2Connected) {
+                showStatus('الغرفة ممتلئة بالفعل!', 'error');
+                return;
+            }
+            
+            // الانضمام للغرفة
+            gameState.roomCode = code;
+            gameState.currentScene = roomData.gameState.currentScene;
+            gameState.teamPoints = roomData.gameState.teamPoints;
+            
+            // تحديث بيانات اللاعب 2
+            roomData.player2Connected = true;
+            localStorage.setItem(`game_room_${code}`, JSON.stringify(roomData));
+            
+            // بدء المزامنة
+            startSync();
+            
+            // الانتقال لشاشة اللعبة
+            loginScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            
+            // تحميل المشهد الحالي
+            loadScene(gameState.currentScene);
+            
+            showStatus('تم الانضمام للغرفة بنجاح!', 'success');
+        }
+        
+        function startSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
+            
+            // مزامنة البيانات كل ثانية
+            syncInterval = setInterval(() => {
+                syncGameData();
+            }, 1000);
+        }
+        
+        function syncGameData() {
+            if (!gameState.roomCode) return;
+            
+            const roomData = loadGameData(gameState.roomCode);
+            if (!roomData) return;
+            
+            // تحديث خيارات اللاعبين
+            playerChoices = roomData.playerChoices || { player1: null, player2: null };
+            
+            // تحديث حالة اللعبة
+            gameState.currentScene = roomData.gameState.currentScene;
+            gameState.teamPoints = roomData.gameState.teamPoints;
+            
+            // تحديث واجهة المستخدم
+            updateChoicesDisplay();
+            updateGameUI();
+            
+            // التحقق من اتصال اللاعبين
+            const now = Date.now();
+            const lastUpdate = roomData.lastUpdated || 0;
+            
+            // إذا مر أكثر من 10 ثواني بدون تحديث، اعتبر اللاعب الآخر غير متصل
+            if (now - lastUpdate > 10000) {
+                if (gameState.player === 'player1' && roomData.player2Connected) {
+                    showStatus('صديقك غير متصل حاليًا', 'error');
+                } else if (gameState.player === 'player2' && roomData.player1Connected) {
+                    showStatus('صديقك غير متصل حاليًا', 'error');
+                }
+            }
+        }
+        
+        function loadScene(sceneId) {
+            const scene = gameState.scenes.find(s => s.id === sceneId);
+            if (!scene) return;
+            
             sceneTitle.textContent = scene.title;
             sceneText.textContent = scene.text;
+            sceneNumber.textContent = sceneId;
             
-            choice1Btn.textContent = scene.choices[0];
-            choice2Btn.textContent = scene.choices[1];
-            choice3Btn.textContent = scene.choices[2];
+            // تحديث الخيارات
+            if (scene.choices.length > 0) {
+                choice1Btn.innerHTML = `<i class="${scene.choices[0].icon}"></i> ${scene.choices[0].text}`;
+                choice2Btn.innerHTML = `<i class="${scene.choices[1].icon}"></i> ${scene.choices[1].text}`;
+                choice3Btn.innerHTML = `<i class="${scene.choices[2].icon}"></i> ${scene.choices[2].text}`;
+                
+                choice1Btn.style.display = 'block';
+                choice2Btn.style.display = 'block';
+                choice3Btn.style.display = 'block';
+            } else {
+                // نهاية اللعبة
+                choice1Btn.style.display = 'none';
+                choice2Btn.style.display = 'none';
+                choice3Btn.style.display = 'none';
+                confirmChoiceBtn.style.display = 'none';
+                resetBtn.style.display = 'none';
+            }
             
-            choice1Btn.onclick = () => makeChoice(0);
-            choice2Btn.onclick = () => makeChoice(1);
-            choice3Btn.onclick = () => makeChoice(2);
+            // إعادة تعيين الخيارات
+            resetChoice();
         }
         
-        // اتخاذ قرار
-        function makeChoice(index) {
-            const choiceText = scenes[game.gameState.scene - 1].choices[index];
+        function makeChoice(choiceId) {
+            if (!gameState.roomCode) return;
             
-            if (game.player === 'player1') {
-                player1ChoiceDisplay.innerHTML = `<i class="fas fa-user"></i> قرارك: ${choiceText}`;
-            } else {
-                player2ChoiceDisplay.innerHTML = `<i class="fas fa-user-friends"></i> قرارك: ${choiceText}`;
-            }
+            // حفظ اختيار اللاعب
+            playerChoices[gameState.player] = choiceId;
             
-            game.updateChoice(index);
+            // تحديث البيانات
+            updateGameData();
+            
+            // تحديث العرض
+            updateChoicesDisplay();
+            
+            showStatus('تم تسجيل اختيارك!', 'success');
         }
         
-        // تأكيد القرار الجماعي
-        confirmChoiceBtn.addEventListener('click', () => {
-            if (game.gameState.player1Choice !== null && game.gameState.player2Choice !== null) {
-                game.confirmTeamChoice();
-                updateScene(game.gameState.scene - 1);
-                resetChoices();
-            }
-        });
-        
-        // إعادة تعيين الخيارات
-        resetBtn.addEventListener('click', () => {
-            game.updateChoice(null);
-            if (game.player === 'player1') {
-                player1ChoiceDisplay.innerHTML = `<i class="fas fa-user"></i> قرارك: ينتظر`;
+        function updateChoicesDisplay() {
+            // تحديث عرض خيار اللاعب 1
+            if (playerChoices.player1) {
+                const scene = gameState.scenes.find(s => s.id === gameState.currentScene);
+                if (scene && scene.choices.length > 0) {
+                    const choice = scene.choices.find(c => c.id === playerChoices.player1);
+                    if (choice) {
+                        player1ChoiceDisplay.innerHTML = `<i class="fas fa-user"></i> اللاعب 1: ${choice.text}`;
+                    }
+                }
             } else {
-                player2ChoiceDisplay.innerHTML = `<i class="fas fa-user-friends"></i> قرارك: ينتظر`;
-            }
-        });
-        
-        // تحديث واجهة اللعبة عند تغيير البيانات
-        game.onUpdate = (state) => {
-            // تحديث خيارات اللاعبين
-            if (state.player1Choice !== null) {
-                const choiceText = scenes[state.scene - 1].choices[state.player1Choice];
-                player1ChoiceDisplay.innerHTML = `<i class="fas fa-user"></i> اللاعب 1: ${choiceText}`;
+                player1ChoiceDisplay.innerHTML = `<i class="fas fa-user"></i> اللاعب 1: ينتظر`;
             }
             
-            if (state.player2Choice !== null) {
-                const choiceText = scenes[state.scene - 1].choices[state.player2Choice];
-                player2ChoiceDisplay.innerHTML = `<i class="fas fa-user-friends"></i> اللاعب 2: ${choiceText}`;
+            // تحديث عرض خيار اللاعب 2
+            if (playerChoices.player2) {
+                const scene = gameState.scenes.find(s => s.id === gameState.currentScene);
+                if (scene && scene.choices.length > 0) {
+                    const choice = scene.choices.find(c => c.id === playerChoices.player2);
+                    if (choice) {
+                        player2ChoiceDisplay.innerHTML = `<i class="fas fa-user-friends"></i> اللاعب 2: ${choice.text}`;
+                    }
+                }
+            } else {
+                player2ChoiceDisplay.innerHTML = `<i class="fas fa-user-friends"></i> اللاعب 2: ينتظر`;
             }
             
             // تفعيل زر التأكيد إذا اتخذ كلا اللاعبين قرارًا
-            if (state.player1Choice !== null && state.player2Choice !== null) {
+            if (playerChoices.player1 && playerChoices.player2) {
                 confirmChoiceBtn.disabled = false;
             } else {
                 confirmChoiceBtn.disabled = true;
             }
+        }
+        
+        function updateGameUI() {
+            teamPoints.textContent = gameState.teamPoints;
+            
+            // تحديث دور اللاعب
+            if (gameState.player === 'player1') {
+                playerRole.textContent = "اللاعب 1 (أنت)";
+            } else {
+                playerRole.textContent = "اللاعب 2 (صديقك)";
+            }
             
             // تحديث المشهد إذا تغير
-            if (state.scene !== game.gameState.scene) {
-                updateScene(state.scene - 1);
+            if (gameState.currentScene !== parseInt(sceneNumber.textContent)) {
+                loadScene(gameState.currentScene);
             }
-        };
+        }
+        
+        function confirmTeamChoice() {
+            if (!playerChoices.player1 || !playerChoices.player2) {
+                showStatus('يجب أن يتخذ كلا اللاعبين قرارًا أولاً', 'error');
+                return;
+            }
+            
+            // زيادة النقاط إذا اتفق اللاعبان
+            if (playerChoices.player1 === playerChoices.player2) {
+                gameState.teamPoints += 20;
+                showStatus('ممتاز! اتفقتما على نفس القرار! +20 نقطة', 'success');
+            } else {
+                gameState.teamPoints = Math.max(0, gameState.teamPoints - 10);
+                showStatus('اختلفتما في القرار! -10 نقطة', 'error');
+            }
+            
+            // الانتقال للمشهد التالي
+            if (gameState.currentScene < gameState.scenes.length) {
+                gameState.currentScene++;
+                
+                // إعادة تعيين الخيارات
+                playerChoices.player1 = null;
+                playerChoices.player2 = null;
+                
+                // تحديث البيانات
+                updateGameData();
+                
+                // تحميل المشهد الجديد
+                setTimeout(() => {
+                    loadScene(gameState.currentScene);
+                    updateChoicesDisplay();
+                }, 1000);
+            }
+        }
+        
+        function resetChoice() {
+            playerChoices[gameState.player] = null;
+            updateGameData();
+            updateChoicesDisplay();
+            showStatus('تم إعادة تعيين اختيارك', 'success');
+        }
+        
+        // بدء اللعبة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', init);
         
         // تنظيف عند إغلاق الصفحة
         window.addEventListener('beforeunload', () => {
-            game.cleanup();
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
         });
-        
-        // إذا كان اللاعب 1 ينتظر الاتصال
-        if (game.player === 'player1') {
-            setTimeout(() => {
-                const roomData = JSON.parse(localStorage.getItem(`room_${game.roomId}`));
-                if (roomData && roomData.player2Connected) {
-                    loginScreen.style.display = 'none';
-                    gameScreen.style.display = 'block';
-                    updateScene(0);
-                }
-            }, 1000);
-        }
     </script>
 </body>
-                        </html>
+</html>
